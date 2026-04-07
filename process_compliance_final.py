@@ -36,7 +36,12 @@ def extract_zips(docs_zip, logos_zip, extract_dir):
 
 def find_images(logos_extract, folder_name):
     """Find logo and thumbnail images for a compliance"""
-    folder_path = os.path.join(logos_extract, folder_name)
+    # Try looking in the subdirectory first (compliance logo marketplace/)
+    folder_path = os.path.join(logos_extract, 'compliance logo marketplace', folder_name)
+    
+    if not os.path.exists(folder_path):
+        # Fallback to direct path (in case structure is different)
+        folder_path = os.path.join(logos_extract, folder_name)
     
     if not os.path.exists(folder_path):
         return None, None
@@ -54,7 +59,6 @@ def find_images(logos_extract, folder_name):
         pass
     
     return logo_path, thumbnail_path
-
 def add_images_to_document(doc_path, logo_path, thumbnail_path, output_path):
     """Add logo and thumbnail images to a DOCX document"""
     try:
