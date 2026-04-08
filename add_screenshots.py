@@ -67,10 +67,25 @@ def build_screenshot_map(screenshot_zips):
     return screenshot_map
 
 
-def add_screenshots_to_doc(doc_path, screenshots, output_path):
+METADATA_LINES = [
+    "Valid Submission : Yes",
+    "Supported Editions : Free, Basic, Standard, Professional, MSSP",
+    "Help Document : https://www.manageengine.com/log-management/help/integrations/compliance-extensions.html",
+    "Help Video : Not provided",
+    "Tags :  Log360 Cloud, Compliance, Privacy monitoring, Data privacy, Regulatory compliance",
+    "Supported DCs : US, IN, JP, CA, AU, UK and EU",
+    "Privacy Policy:",
+    "Terms of Service:",
+    "Release Notes:",
+]
+
+
+def add_screenshots_to_doc(doc_path, screenshots, output_path, compliance_name=""):
     """
-    Load a DOCX document, append 4 screenshots in order, and save to output_path.
+    Load a DOCX document, append 4 screenshots in order, add metadata content,
+    and save to output_path.
     screenshots: list of local file paths in the correct order.
+    compliance_name: name extracted from the document filename, used in the last metadata line.
     """
     doc = Document(doc_path)
 
@@ -82,6 +97,14 @@ def add_screenshots_to_doc(doc_path, screenshots, output_path):
             width=Inches(SCREENSHOT_WIDTH_INCHES),
         )
         paragraph.alignment = 1  # Center
+
+    # Add metadata content after screenshots
+    for line in METADATA_LINES:
+        doc.add_paragraph(line)
+
+    # Last line with dynamic compliance name
+    predefined_line = f"Predefined reports for the {compliance_name}."
+    doc.add_paragraph(predefined_line)
 
     doc.save(output_path)
 
@@ -167,7 +190,7 @@ def main():
                     print(f"         ✗ {screenshot_name} not found")
 
             try:
-                add_screenshots_to_doc(doc_path, screenshot_paths, output_path)
+                add_screenshots_to_doc(doc_path, screenshot_paths, output_path, compliance_name)
                 print(f"         ✓ Document saved\n")
                 successful += 1
             except Exception as e:
