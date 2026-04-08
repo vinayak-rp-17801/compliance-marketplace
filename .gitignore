@@ -1,0 +1,7 @@
+output-documents.zip
+extracted_files/
+extracted_docs/
+extracted_logos/
+output_docs/
+__pycache__/
+*.pyc
